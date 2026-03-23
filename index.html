@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Loom — 帮职业女性学会用 AI</title>
+  <meta name="description" content="New Loom（新织机）是一个支持女性学习和使用 AI 的公益项目。免费咨询、实战工作坊、资源库，学了就能用。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=LXGW+WenKai:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --violet-deep: #2D1B4E;
+      --violet-mid: #3D2260;
+      --violet: #6D3B9E;
+      --rose: #C4547A;
+      --rose-light: #E8A0B4;
+      --blush: #F2CED5;
+      --warm-blue: #7BA7CC;
+      --cream: #FAF5F0;
+      --text-light: rgba(250, 245, 240, 0.92);
+      --text-muted: rgba(250, 245, 240, 0.6);
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --card-border: rgba(232, 160, 180, 0.12);
+      --section-gap: clamp(5rem, 10vh, 8rem);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'LXGW WenKai', serif;
+      background: var(--violet-deep);
+      color: var(--text-light);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .grain-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.3;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    .section {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .section__inner {
+      position: relative;
+      z-index: 10;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--section-gap) 2rem;
+    }
+
+    .section__label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--rose-light);
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    .section__heading {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: 0.04em;
+      margin-bottom: 3rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(35px);
+      transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.3s; }
+    .reveal-delay-3 { transition-delay: 0.45s; }
+    .reveal-delay-4 { transition-delay: 0.6s; }
+
+    /* ======================== HERO ======================== */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 30% 80%, rgba(109, 59, 158, 0.5) 0%, transparent 70%),
+        radial-gradient(ellipse 70% 50% at 75% 20%, rgba(196, 84, 122, 0.45) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(123, 167, 204, 0.15) 0%, transparent 60%),
+        linear-gradient(160deg, var(--violet-deep) 0%, #3D2260 30%, #5A3478 50%, #7A4070 70%, #4A2555 100%);
+      z-index: 0;
+    }
+
+    .hero__ribbons {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .ribbon {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .ribbon--1 {
+      top: 8%;
+      right: -5%;
+      width: 55%;
+      animation: ribbonFloat1 2s ease-out 0.8s forwards, ribbonDrift 12s ease-in-out 2.8s infinite;
+    }
+
+    .ribbon--2 {
+      bottom: 15%;
+      right: 5%;
+      width: 35%;
+      animation: ribbonFloat2 2s ease-out 1.2s forwards, ribbonDrift2 15s ease-in-out 3.2s infinite;
+    }
+
+    .ribbon--3 {
+      top: 30%;
+      left: -8%;
+      width: 40%;
+      animation: ribbonFloat3 2s ease-out 1s forwards, ribbonDrift3 18s ease-in-out 3s infinite;
+    }
+
+    @keyframes ribbonFloat1 {
+      from { opacity: 0; transform: translateY(30px) rotate(2deg); }
+      to { opacity: 0.25; transform: translateY(0) rotate(0deg); }
+    }
+    @keyframes ribbonFloat2 {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 0.18; transform: translateX(0); }
+    }
+    @keyframes ribbonFloat3 {
+      from { opacity: 0; transform: translateY(20px) rotate(-3deg); }
+      to { opacity: 0.15; transform: translateY(0) rotate(0deg); }
+    }
+
+    @keyframes ribbonDrift {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(1.5deg); }
+    }
+    @keyframes ribbonDrift2 {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      50% { transform: translateX(-10px) rotate(-1deg); }
+    }
+    @keyframes ribbonDrift3 {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(2deg); }
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      max-width: 800px;
+    }
+
+    .hero__eyebrow {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--rose-light);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out 0.3s forwards;
+    }
+
+    .hero__headline {
+      font-family: 'LXGW WenKai', serif;
+      font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out 0.6s forwards;
+    }
+
+    .hero__headline em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--rose-light) 0%, var(--blush) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero__pain-points {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out 0.9s forwards;
+    }
+
+    .pain-tag {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(232, 160, 180, 0.15);
+      border-radius: 100px;
+      padding: 0.5rem 1.2rem;
+      white-space: nowrap;
+    }
+
+    .hero__answer {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 300;
+      line-height: 2;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out 1.1s forwards;
+    }
+
+    .hero__answer strong {
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    .hero__cta {
+      display: inline-block;
+      font-family: 'LXGW WenKai', serif;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--violet-deep);
+      background: linear-gradient(135deg, var(--rose-light) 0%, var(--blush) 50%, var(--cream) 100%);
+      border: none;
+      padding: 1rem 2.8rem;
+      border-radius: 100px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      box-shadow: 0 4px 25px rgba(196, 84, 122, 0.3);
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out 1.3s forwards;
+    }
+
+    .hero__cta:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 40px rgba(196, 84, 122, 0.45);
+    }
+
+    .hero__cta:active {
+      transform: translateY(-1px) scale(1.01);
+    }
+
+    .hero__free {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      margin-top: 1rem;
+      opacity: 0;
+      animation: fadeUp 1.2s ease-out 1.5s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero__scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      opacity: 0;
+      animation: fadeUp 1s ease-out 2s forwards;
+    }
+
+    .hero__scroll-text {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+    }
+
+    .hero__scroll-line {
+      width: 1px;
+      height: 32px;
+      background: linear-gradient(to bottom, var(--rose-light), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 0.8; transform: scaleY(1.3); }
+    }
+
+    /* ======================== SERVICES ======================== */
+    .services {
+      background: linear-gradient(180deg, var(--violet-deep) 0%, #2A1945 50%, var(--violet-deep) 100%);
+    }
+
+    .services__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .svc-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2.5rem 1.8rem;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .svc-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(232, 160, 180, 0.3);
+      box-shadow: 0 12px 50px rgba(109, 59, 158, 0.2);
+    }
+
+    .svc-card__icon {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(109, 59, 158, 0.3), rgba(196, 84, 122, 0.2));
+    }
+
+    .svc-card__icon svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .svc-card__title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+      color: var(--rose-light);
+    }
+
+    .svc-card__scenario {
+      font-size: 0.88rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid rgba(232, 160, 180, 0.08);
+    }
+
+    .svc-card__detail {
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-light);
+    }
+
+    /* ======================== STORY ======================== */
+    .story {
+      background: linear-gradient(180deg, var(--violet-deep) 0%, #321D50 50%, var(--violet-deep) 100%);
+    }
+
+    .story__content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .story__text {
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 2.2;
+      color: var(--text-muted);
+    }
+
+    .story__text strong {
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    .story__visual {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+    }
+
+    .story__quote {
+      text-align: center;
+      padding: 2.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .story__quote-text {
+      font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+      font-weight: 400;
+      line-height: 2;
+      letter-spacing: 0.04em;
+    }
+
+    .story__quote-text .highlight {
+      background: linear-gradient(135deg, var(--rose-light), var(--blush));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+
+    .story__slogan {
+      margin-top: 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+    }
+
+    /* ======================== JOIN ======================== */
+    .join {
+      background: linear-gradient(180deg, var(--violet-deep) 0%, #2A1945 100%);
+    }
+
+    .join__inner {
+      text-align: center;
+      padding: var(--section-gap) 2rem clamp(4rem, 8vh, 6rem);
+    }
+
+    .join__heading {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.5rem;
+    }
+
+    .join__text {
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-muted);
+      max-width: 500px;
+      margin: 0 auto 3rem;
+    }
+
+    .join__form {
+      max-width: 440px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--rose-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group label .optional {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      margin-left: 0.3rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      font-family: 'LXGW WenKai', serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--text-light);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 0.85rem 1.1rem;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(250, 245, 240, 0.25);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: rgba(232, 160, 180, 0.4);
+      box-shadow: 0 0 0 3px rgba(232, 160, 180, 0.08);
+    }
+
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='rgba(232,160,180,0.5)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    .form-group select option {
+      background: var(--violet-deep);
+      color: var(--text-light);
+    }
+
+    .join__submit {
+      display: block;
+      width: 100%;
+      font-family: 'LXGW WenKai', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--violet-deep);
+      background: linear-gradient(135deg, var(--rose-light) 0%, var(--blush) 50%, var(--cream) 100%);
+      border: none;
+      padding: 1rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, opacity 0.3s ease;
+      box-shadow: 0 4px 30px rgba(196, 84, 122, 0.35);
+      margin-top: 0.5rem;
+    }
+
+    .join__submit:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 45px rgba(196, 84, 122, 0.5);
+    }
+
+    .join__submit:active {
+      transform: translateY(-1px) scale(1.01);
+    }
+
+    .join__submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .join__success {
+      display: none;
+      text-align: center;
+      animation: fadeUp 0.8s ease-out forwards;
+    }
+
+    .join__success.show {
+      display: block;
+    }
+
+    .join__qr {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 1.5rem;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .join__qr img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .join__success-text {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-muted);
+    }
+
+    .join__error {
+      display: none;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #e87e7e;
+      margin-top: 1rem;
+    }
+
+    /* ======================== FOOTER ======================== */
+    .footer {
+      position: relative;
+      text-align: center;
+      padding: 3rem 2rem 2.5rem;
+      border-top: 1px solid rgba(232, 160, 180, 0.08);
+    }
+
+    .footer__slogan {
+      font-family: 'LXGW WenKai', serif;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      margin-bottom: 0.4rem;
+    }
+
+    .footer__slogan-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      font-style: italic;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .footer__contact {
+      font-size: 0.78rem;
+      color: rgba(250, 245, 240, 0.3);
+      letter-spacing: 0.05em;
+    }
+
+    .footer__contact a {
+      color: rgba(232, 160, 180, 0.5);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer__contact a:hover {
+      color: var(--rose-light);
+    }
+
+    /* ======================== DIVIDERS ======================== */
+    .section-divider {
+      position: relative;
+      height: 1px;
+      max-width: 200px;
+      margin: 0 auto;
+      background: linear-gradient(to right, transparent, var(--card-border), transparent);
+    }
+
+    /* ======================== RESPONSIVE ======================== */
+    @media (max-width: 768px) {
+      .hero__content {
+        padding: 1.5rem;
+      }
+      .hero__headline {
+        letter-spacing: 0.04em;
+      }
+      .hero__eyebrow {
+        letter-spacing: 0.2em;
+        margin-bottom: 1.5rem;
+      }
+      .hero__pain-points {
+        gap: 0.8rem;
+      }
+      .ribbon--1 { width: 70%; right: -15%; }
+      .ribbon--3 { display: none; }
+
+      .services__grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .story__content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .section__inner {
+        padding: clamp(4rem, 10vh, 7rem) 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .svc-card {
+        padding: 2rem 1.5rem;
+      }
+      .pain-tag {
+        font-size: 0.82rem;
+        padding: 0.4rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <div class="hero__bg"></div>
+    <div class="grain-overlay"></div>
+
+    <div class="hero__ribbons">
+      <svg class="ribbon ribbon--1" viewBox="0 0 600 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 100 C80 40, 180 160, 280 80 S480 130, 600 60" stroke="url(#r1)" stroke-width="2" fill="none"/>
+        <path d="M0 130 C100 70, 200 180, 320 100 S500 150, 600 90" stroke="url(#r1)" stroke-width="1.2" fill="none" opacity="0.6"/>
+        <path d="M50 80 C130 20, 220 140, 340 65 S520 110, 600 45" stroke="url(#r1)" stroke-width="0.8" fill="none" opacity="0.4"/>
+        <defs>
+          <linearGradient id="r1" x1="0" y1="0" x2="600" y2="0">
+            <stop offset="0%" stop-color="rgba(232,160,180,0.8)"/>
+            <stop offset="50%" stop-color="rgba(196,84,122,0.6)"/>
+            <stop offset="100%" stop-color="rgba(123,167,204,0.4)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <svg class="ribbon ribbon--2" viewBox="0 0 400 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 75 C60 30, 140 120, 220 60 S340 100, 400 50" stroke="url(#r2)" stroke-width="1.5" fill="none"/>
+        <path d="M0 95 C80 50, 160 130, 250 75 S360 110, 400 70" stroke="url(#r2)" stroke-width="0.8" fill="none" opacity="0.5"/>
+        <defs>
+          <linearGradient id="r2" x1="0" y1="0" x2="400" y2="0">
+            <stop offset="0%" stop-color="rgba(123,167,204,0.6)"/>
+            <stop offset="100%" stop-color="rgba(232,160,180,0.5)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <svg class="ribbon ribbon--3" viewBox="0 0 500 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 90 C70 40, 150 150, 260 70 S420 120, 500 55" stroke="url(#r3)" stroke-width="1.8" fill="none"/>
+        <path d="M20 120 C90 60, 180 160, 300 90 S440 140, 500 80" stroke="url(#r3)" stroke-width="1" fill="none" opacity="0.5"/>
+        <defs>
+          <linearGradient id="r3" x1="0" y1="0" x2="500" y2="0">
+            <stop offset="0%" stop-color="rgba(109,59,158,0.5)"/>
+            <stop offset="50%" stop-color="rgba(196,84,122,0.4)"/>
+            <stop offset="100%" stop-color="rgba(232,160,180,0.3)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="hero__content">
+      <p class="hero__eyebrow">New Loom · 新织机</p>
+      <h1 class="hero__headline">帮职业女性<em>学会用 AI</em></h1>
+
+      <div class="hero__pain-points">
+        <span class="pain-tag">听说过 AI 但不知道怎么用？</span>
+        <span class="pain-tag">想提效但没时间研究？</span>
+        <span class="pain-tag">怕自己学不会？</span>
+      </div>
+
+      <p class="hero__answer">
+        我们提供<strong>免费咨询、实战工作坊和资源库</strong>，<br>
+        手把手帮你把 AI 用到工作里。
+      </p>
+
+      <a href="#join" class="hero__cta">免费加入</a>
+      <p class="hero__free">公益项目 · 助力女性 · 始于2026</p>
+    </div>
+
+    <div class="hero__scroll">
+      <span class="hero__scroll-text">了解更多</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ==================== SERVICES ==================== -->
+  <section class="section services">
+    <div class="grain-overlay"></div>
+    <div class="section__inner">
+      <p class="section__label reveal">What We Offer</p>
+      <h2 class="section__heading reveal reveal-delay-1">我们能帮你做什么</h2>
+
+      <div class="services__grid">
+        <div class="svc-card reveal reveal-delay-2">
+          <div class="svc-card__icon">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 4C8.48 4 4 8.48 4 14s4.48 10 10 10 10-4.48 10-10S19.52 4 14 4z" stroke="var(--rose-light)" stroke-width="1.5" fill="none"/>
+              <path d="M9 14.5 C9 14.5, 11 17, 14 14 S19 11, 19 14.5" stroke="var(--rose-light)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <circle cx="10" cy="11" r="1" fill="var(--rose-light)"/>
+              <circle cx="18" cy="11" r="1" fill="var(--rose-light)"/>
+            </svg>
+          </div>
+          <h3 class="svc-card__title">一对一免费咨询</h3>
+          <p class="svc-card__scenario">「我的工作能用 AI 吗？」</p>
+          <p class="svc-card__detail">为你连接科技背景的女性伙伴，聊聊你的工作场景，帮你一起找到最适合的 AI 工具和用法。</p>
+        </div>
+
+        <div class="svc-card reveal reveal-delay-3">
+          <div class="svc-card__icon">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="6" width="22" height="16" rx="3" stroke="var(--rose-light)" stroke-width="1.5" fill="none"/>
+              <path d="M8 13 L12 16 L20 10" stroke="var(--rose-light)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="svc-card__title">AI 实战工作坊</h3>
+          <p class="svc-card__scenario">「想动手试试，但不知道从哪一步开始。」</p>
+          <p class="svc-card__detail">面向职业女性的 AI 实战课程，手把手分享实操流程，学了就能用。</p>
+        </div>
+
+        <div class="svc-card reveal reveal-delay-4">
+          <div class="svc-card__icon">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 22 V8 C6 6.9 6.9 6 8 6 H16 L22 12 V22 C22 23.1 21.1 24 20 24 H8 C6.9 24 6 23.1 6 22Z" stroke="var(--rose-light)" stroke-width="1.5" fill="none"/>
+              <path d="M16 6 V12 H22" stroke="var(--rose-light)" stroke-width="1.5" fill="none"/>
+              <line x1="10" y1="16" x2="18" y2="16" stroke="var(--rose-light)" stroke-width="1" opacity="0.6"/>
+              <line x1="10" y1="19" x2="16" y2="19" stroke="var(--rose-light)" stroke-width="1" opacity="0.6"/>
+            </svg>
+          </div>
+          <h3 class="svc-card__title">资源库</h3>
+          <p class="svc-card__scenario">「网上信息太多，到底哪些是好东西？」</p>
+          <p class="svc-card__detail">精选的 AI 学习路径、工具清单和使用经验，共享资源一起进步。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ==================== STORY ==================== -->
+  <section class="section story">
+    <div class="grain-overlay"></div>
+    <div class="section__inner">
+      <p class="section__label reveal">Our Story</p>
+      <h2 class="section__heading reveal reveal-delay-1">为什么叫 New Loom</h2>
+
+      <div class="story__content">
+        <div class="reveal reveal-delay-2">
+          <p class="story__text">
+            世界上第一台可编程计算机的原型，就是 19 世纪的提花织机（Jacquard loom）。<strong>女性，曾是代码最早的"编织者"。</strong><br><br>
+            然而在漫长的历史中，"织布"也曾将女性束缚在家庭和工厂的流水线上——日复一日，繁重而隐形。<br><br>
+            今天，当 AI 掀起新一轮生产力革命，我们将它视作数字时代的<strong>"新织机"</strong>，鼓励女性重新坐到这台机器前——不再是穿梭往复，而是编写 Prompt、调用 Agent，织造一种新的工作和生活方式。
+          </p>
+        </div>
+
+        <div class="reveal reveal-delay-3">
+          <div class="story__quote">
+            <p class="story__quote-text">
+              让那份本就属于女性、<br>
+              却久被忽视的<span class="highlight">创造力</span>，<br>
+              借由这束技术的强光投射，<br>
+              <span class="highlight">再也不必隐身。</span>
+            </p>
+            <p class="story__slogan">New Loom, New Liberty.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ==================== JOIN ==================== -->
+  <section class="section join" id="join">
+    <div class="grain-overlay"></div>
+    <div class="section__inner join__inner">
+      <p class="section__label reveal">Join Us</p>
+      <h2 class="join__heading reveal reveal-delay-1">加入 New Loom</h2>
+      <p class="join__text reveal reveal-delay-2">
+        无论你是想学习 AI 的职业女性，<br>
+        还是愿意一起共建的伙伴，<br>
+        我们都诚挚地欢迎。
+      </p>
+
+      <div id="joinForm" class="join__form reveal reveal-delay-3">
+        <div class="form-group">
+          <label for="name">你是谁</label>
+          <input type="text" id="name" name="name" placeholder="请填写你的微信昵称" required>
+        </div>
+        <div class="form-group">
+          <label for="career">职业 / 行业 <span class="optional">（选填）</span></label>
+          <input type="text" id="career" name="career" placeholder="例如：产品经理 / 教育行业">
+        </div>
+        <div class="form-group">
+          <label for="interest">最想了解 AI 的哪个方面</label>
+          <select id="interest" name="interest" required>
+            <option value="" disabled selected>请选择</option>
+            <option value="提高工作效率">提高工作效率</option>
+            <option value="学习AI工具">学习 AI 工具</option>
+            <option value="探索副业可能">探索副业可能</option>
+            <option value="参与共建">我想参与共建</option>
+            <option value="只是好奇看看">只是好奇看看</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">想说的话 <span class="optional">（选填）</span></label>
+          <textarea id="message" name="message" placeholder="任何想法、建议或问题，都可以写在这里" rows="3"></textarea>
+        </div>
+        <button type="button" class="join__submit" id="submitBtn" onclick="submitForm()">我想加入</button>
+        <p class="join__error" id="formError"></p>
+      </div>
+
+      <div id="joinSuccess" class="join__success">
+        <div class="join__qr">
+          <img src="QR.jpg" alt="微信二维码">
+        </div>
+        <p class="join__success-text">
+          欢迎扫码添加，请备注 NewLoom，我们会尽快联系你 :)
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <p class="footer__slogan">再造织机，织就自由。</p>
+    <p class="footer__slogan-en">New Loom, New Liberty.</p>
+    <p class="footer__contact">
+      联系我们：<a href="mailto:newloom2026@163.com">newloom2026@163.com</a>
+    </p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    const API_URL = 'https://newloom-api.yuwsfreya.workers.dev/';
+
+    async function submitForm() {
+      const name = document.getElementById('name').value.trim();
+      const career = document.getElementById('career').value.trim();
+      const interest = document.getElementById('interest').value;
+      const message = document.getElementById('message').value.trim();
+      const btn = document.getElementById('submitBtn');
+      const errorEl = document.getElementById('formError');
+
+      errorEl.style.display = 'none';
+
+      if (!name) {
+        errorEl.textContent = '请填写你的微信昵称';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (!interest) {
+        errorEl.textContent = '请选择你最想了解的方向';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '提交中...';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            '称呼': name,
+            '职业/行业': career || '未填写',
+            '感兴趣方向': interest,
+            '留言': message || '未填写'
+          })
+        });
+        const data = await res.json();
+        if (data.code !== 0) throw new Error(data.msg);
+
+        document.getElementById('joinForm').style.display = 'none';
+        const success = document.getElementById('joinSuccess');
+        success.classList.add('show');
+      } catch (e) {
+        errorEl.textContent = '提交遇到了问题，请稍后再试';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '我想加入';
+      }
+    }
+  </script>
+
+</body>
+</html>
