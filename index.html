@@ -996,7 +996,7 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    const API_URL = 'https://newloom-api.yuwsfreya.workers.dev/';
+    const API_URL = '/api/submit';
 
     function fetchWithTimeout(url, options, timeout = 15000) {
       return Promise.race([
