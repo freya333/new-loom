@@ -110,6 +110,11 @@
     .reveal-delay-3 { transition-delay: 0.45s; }
     .reveal-delay-4 { transition-delay: 0.6s; }
 
+    @keyframes revealFallback {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { animation: revealFallback 0s ease-out 3s forwards; }
+
     /* ======================== HERO ======================== */
     .hero {
       position: relative;
@@ -605,6 +610,17 @@
       transform: translateY(-1px) scale(1.01);
     }
 
+    .join__submit {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      touch-action: manipulation;
+    }
+
     .join__submit:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -942,7 +958,7 @@
           <label for="message">想说的话 <span class="optional">（选填）</span></label>
           <textarea id="message" name="message" placeholder="任何想法、建议或问题，都可以写在这里" rows="3"></textarea>
         </div>
-        <button type="button" class="join__submit" id="submitBtn" onclick="submitForm()">我想加入</button>
+        <button type="button" class="join__submit" id="submitBtn">我想加入</button>
         <p class="join__error" id="formError"></p>
       </div>
 
@@ -982,13 +998,22 @@
 
     const API_URL = 'https://newloom-api.yuwsfreya.workers.dev/';
 
+    function fetchWithTimeout(url, options, timeout = 15000) {
+      return Promise.race([
+        fetch(url, options),
+        new Promise(function(_, reject) {
+          setTimeout(function() { reject(new Error('timeout')); }, timeout);
+        })
+      ]);
+    }
+
     async function submitForm() {
-      const name = document.getElementById('name').value.trim();
-      const career = document.getElementById('career').value.trim();
-      const interest = document.getElementById('interest').value;
-      const message = document.getElementById('message').value.trim();
-      const btn = document.getElementById('submitBtn');
-      const errorEl = document.getElementById('formError');
+      var name = document.getElementById('name').value.trim();
+      var career = document.getElementById('career').value.trim();
+      var interest = document.getElementById('interest').value;
+      var message = document.getElementById('message').value.trim();
+      var btn = document.getElementById('submitBtn');
+      var errorEl = document.getElementById('formError');
 
       errorEl.style.display = 'none';
 
@@ -1007,7 +1032,7 @@
       btn.textContent = '提交中...';
 
       try {
-        const res = await fetch(API_URL, {
+        var res = await fetchWithTimeout(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1017,19 +1042,26 @@
             '留言': message || '未填写'
           })
         });
-        const data = await res.json();
+        var data = await res.json();
         if (data.code !== 0) throw new Error(data.msg);
 
         document.getElementById('joinForm').style.display = 'none';
-        const success = document.getElementById('joinSuccess');
-        success.classList.add('show');
+        document.getElementById('joinSuccess').classList.add('show');
       } catch (e) {
-        errorEl.textContent = '提交遇到了问题，请稍后再试';
+        if (e.message === 'timeout') {
+          errorEl.textContent = '网络连接超时，请检查网络后重试';
+        } else if (!navigator.onLine) {
+          errorEl.textContent = '当前无网络连接，请检查网络设置';
+        } else {
+          errorEl.textContent = '提交遇到了问题，请稍后再试';
+        }
         errorEl.style.display = 'block';
         btn.disabled = false;
         btn.textContent = '我想加入';
       }
     }
+
+    document.getElementById('submitBtn').addEventListener('click', submitForm);
   </script>
 
 </body>
