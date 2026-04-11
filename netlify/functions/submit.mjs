@@ -1,7 +1,7 @@
 const APP_ID = 'cli_a934ac6034b8dcb3';
 const APP_SECRET = '4ZylwBs4PjlAlS0bpVwHnf5FqQmRvlEF';
 const APP_TOKEN = 'Ja8jbqkmVamaUjsvl8Ec1BVCn3g';
-const TABLE_ID = 'tblftbE5Tv8GAewe';
+const TABLE_ID = 'tblQFVrk4sc1QKub';
 
 export default async (req) => {
   if (req.method === 'OPTIONS') {
@@ -31,6 +31,15 @@ export default async (req) => {
     );
     const tokenData = await tokenRes.json();
 
+    const fields = {};
+    for (const [key, val] of Object.entries(body)) {
+      if (Array.isArray(val)) {
+        fields[key] = val;
+      } else {
+        fields[key] = val;
+      }
+    }
+
     const recordRes = await fetch(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${TABLE_ID}/records`,
       {
@@ -39,7 +48,7 @@ export default async (req) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${tokenData.tenant_access_token}`,
         },
-        body: JSON.stringify({ fields: body }),
+        body: JSON.stringify({ fields }),
       }
     );
     const recordData = await recordRes.json();

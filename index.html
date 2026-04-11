@@ -621,6 +621,81 @@
       touch-action: manipulation;
     }
 
+    .role-switch {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2rem;
+      border-radius: 100px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .role-switch__btn {
+      flex: 1;
+      font-family: 'LXGW WenKai', serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .role-switch__btn.active {
+      color: var(--violet-deep);
+      background: linear-gradient(135deg, var(--rose-light) 0%, var(--blush) 100%);
+      font-weight: 700;
+    }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .checkbox-tag {
+      position: relative;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .checkbox-tag input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .checkbox-tag span {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 100px;
+      padding: 0.5rem 1.1rem;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .checkbox-tag input:checked + span {
+      color: var(--violet-deep);
+      background: linear-gradient(135deg, var(--rose-light), var(--blush));
+      border-color: var(--rose-light);
+      font-weight: 400;
+    }
+
     .join__submit:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -935,39 +1010,77 @@
       </p>
 
       <div id="joinForm" class="join__form reveal reveal-delay-3">
+
+        <div class="role-switch">
+          <button type="button" class="role-switch__btn active" data-role="learner">我想学习 AI</button>
+          <button type="button" class="role-switch__btn" data-role="volunteer">我想成为志愿者</button>
+        </div>
+
         <div class="form-group">
-          <label for="name">你是谁</label>
-          <input type="text" id="name" name="name" placeholder="请填写你的微信昵称" required>
+          <label for="wechat">微信号</label>
+          <input type="text" id="wechat" name="wechat" placeholder="方便我们联系你" required>
         </div>
         <div class="form-group">
-          <label for="career">职业 / 行业 <span class="optional">（选填）</span></label>
-          <input type="text" id="career" name="career" placeholder="例如：产品经理 / 教育行业">
+          <label for="career">职业 / 行业</label>
+          <input type="text" id="career" name="career" placeholder="例如：产品经理 / 教育行业" required>
         </div>
-        <div class="form-group">
-          <label for="interest">最想了解 AI 的哪个方面</label>
-          <select id="interest" name="interest" required>
-            <option value="" disabled selected>请选择</option>
-            <option value="提高工作效率">提高工作效率</option>
-            <option value="学习AI工具">学习 AI 工具</option>
-            <option value="探索副业可能">探索副业可能</option>
-            <option value="参与共建">我想参与共建</option>
-            <option value="只是好奇看看">只是好奇看看</option>
-          </select>
+
+        <div id="learnerFields" class="form-section active">
+          <div class="form-group">
+            <label>你目前的 AI 使用水平</label>
+            <select id="aiLevel" name="aiLevel" required>
+              <option value="" disabled selected>请选择</option>
+              <option value="没用过">没用过</option>
+              <option value="偶尔使用聊天机器人">偶尔使用聊天机器人</option>
+              <option value="日常使用几个工具">日常使用几个工具</option>
+              <option value="深度用户">深度用户</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="problem">你最想解决的问题 <span class="optional">（请尽量写具体，方便我们快速匹配适合的资源）</span></label>
+            <textarea id="problem" name="problem" placeholder="例如：想用 AI 帮我写公众号文章，但不知道怎么让它写得像自己的风格" rows="3"></textarea>
+          </div>
         </div>
+
+        <div id="volunteerFields" class="form-section">
+          <div class="form-group">
+            <label>你擅长的 AI 方向 <span class="optional">（可多选）</span></label>
+            <div class="checkbox-group" id="skillGroup">
+              <label class="checkbox-tag"><input type="checkbox" value="AI写作与内容创作"><span>AI 写作与内容创作</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="AI办公与提效"><span>AI 办公与提效</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="AI编程与产品开发"><span>AI 编程与产品开发</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="AI数据分析"><span>AI 数据分析</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="AI图片视频"><span>AI 图片视频</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="AI技术原理与行业研究"><span>AI 技术原理与行业研究</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="其他（请留言备注）"><span>其他（请留言备注）</span></label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>你愿意参与的方式 <span class="optional">（可多选）</span></label>
+            <div class="checkbox-group" id="participateGroup">
+              <label class="checkbox-tag"><input type="checkbox" value="提供一对一咨询"><span>提供一对一咨询</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="工作坊分享嘉宾"><span>工作坊分享嘉宾</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="分享学习资源"><span>分享学习资源</span></label>
+              <label class="checkbox-tag"><input type="checkbox" value="其他（请留言备注）"><span>其他（请留言备注）</span></label>
+            </div>
+          </div>
+        </div>
+
         <div class="form-group">
-          <label for="message">想说的话 <span class="optional">（选填）</span></label>
+          <label for="message">补充说明 <span class="optional">（选填）</span></label>
           <textarea id="message" name="message" placeholder="任何想法、建议或问题，都可以写在这里" rows="3"></textarea>
         </div>
+
         <button type="button" class="join__submit" id="submitBtn">我想加入</button>
         <p class="join__error" id="formError"></p>
       </div>
 
       <div id="joinSuccess" class="join__success">
         <div class="join__qr">
-          <img src="QR.jpg" alt="微信二维码">
+          <img src="群码.png" alt="学习社群二维码">
         </div>
         <p class="join__success-text">
-          欢迎扫码添加，请备注 NewLoom，我们会尽快联系你 :)
+          欢迎扫码加入社群，相关服务会在群内发布：）
         </p>
       </div>
     </div>
@@ -997,6 +1110,25 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
     const API_URL = '/api/submit';
+    var currentRole = 'learner';
+
+    document.querySelectorAll('.role-switch__btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.role-switch__btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentRole = btn.dataset.role;
+        document.getElementById('learnerFields').classList.toggle('active', currentRole === 'learner');
+        document.getElementById('volunteerFields').classList.toggle('active', currentRole === 'volunteer');
+      });
+    });
+
+    function getCheckedValues(groupId) {
+      var checked = [];
+      document.querySelectorAll('#' + groupId + ' input[type=checkbox]:checked').forEach(function(cb) {
+        checked.push(cb.value);
+      });
+      return checked;
+    }
 
     function fetchWithTimeout(url, options, timeout = 15000) {
       return Promise.race([
@@ -1008,24 +1140,57 @@
     }
 
     async function submitForm() {
-      var name = document.getElementById('name').value.trim();
+      var wechat = document.getElementById('wechat').value.trim();
       var career = document.getElementById('career').value.trim();
-      var interest = document.getElementById('interest').value;
       var message = document.getElementById('message').value.trim();
       var btn = document.getElementById('submitBtn');
       var errorEl = document.getElementById('formError');
 
       errorEl.style.display = 'none';
 
-      if (!name) {
-        errorEl.textContent = '请填写你的微信昵称';
+      if (!wechat) {
+        errorEl.textContent = '请填写你的微信号';
         errorEl.style.display = 'block';
         return;
       }
-      if (!interest) {
-        errorEl.textContent = '请选择你最想了解的方向';
+      if (!career) {
+        errorEl.textContent = '请填写你的职业/行业';
         errorEl.style.display = 'block';
         return;
+      }
+
+      var fields = {
+        '角色': currentRole === 'learner' ? '学习者' : '志愿者',
+        '微信号': wechat,
+        '职业/行业': career,
+        '留言': message || ''
+      };
+
+      if (currentRole === 'learner') {
+        var aiLevel = document.getElementById('aiLevel').value;
+        if (!aiLevel) {
+          errorEl.textContent = '请选择你的 AI 使用水平';
+          errorEl.style.display = 'block';
+          return;
+        }
+        var problem = document.getElementById('problem').value.trim();
+        fields['AI使用水平'] = aiLevel;
+        fields['最想解决的问题'] = problem || '';
+      } else {
+        var skills = getCheckedValues('skillGroup');
+        var participate = getCheckedValues('participateGroup');
+        if (skills.length === 0) {
+          errorEl.textContent = '请至少选择一个擅长的 AI 方向';
+          errorEl.style.display = 'block';
+          return;
+        }
+        if (participate.length === 0) {
+          errorEl.textContent = '请至少选择一种参与方式';
+          errorEl.style.display = 'block';
+          return;
+        }
+        fields['擅长的AI方向'] = skills;
+        fields['愿意参与的方式'] = participate;
       }
 
       btn.disabled = true;
@@ -1035,12 +1200,7 @@
         var res = await fetchWithTimeout(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            '称呼': name,
-            '职业/行业': career || '未填写',
-            '感兴趣方向': interest,
-            '留言': message || '未填写'
-          })
+          body: JSON.stringify(fields)
         });
         var data = await res.json();
         if (data.code !== 0) throw new Error(data.msg);

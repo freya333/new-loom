@@ -1,14 +1,13 @@
+functionsDirectory = "/Users/freyayu/Documents/创业项目/New Loom/网站开发/netlify/functions"
+functionsDirectoryOrigin = "default"
 plugins = []
 headers = []
 redirects = []
 
-[functions]
-
-[functions."*"]
-
 [build]
-publish = "/Users/freyayu/Documents/创业项目/New Loom"
+publish = "/Users/freyayu/Documents/创业项目/New Loom/网站开发"
 publishOrigin = "default"
+functions = "/Users/freyayu/Documents/创业项目/New Loom/网站开发/netlify/functions"
 
 [build.environment]
 
@@ -23,3 +22,7 @@ publishOrigin = "default"
 [build.processing.js]
 
 [build.services]
+
+[functions]
+
+[functions."*"]
